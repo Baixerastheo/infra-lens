@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/Baixerastheo/infra-lens/internal/parser"
 	"github.com/spf13/cobra"
 )
 
@@ -20,6 +21,17 @@ var scanCmd = &cobra.Command{
 		}
 
 		fmt.Printf("Scanning %s...\n", path)
+
+		resources, err := parser.Parse(path)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "error: %s\n", err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("Found %d ressources\n", len(resources))
+		for _, r := range resources {
+			fmt.Printf(" → %s.%s (%s)\n", r.Type, r.Name, r.File)
+		}
 	},
 }
 
