@@ -12,6 +12,7 @@ type Resource struct {
 	Type       string
 	Name       string
 	Attributes map[string]hcl.Expression
+	Blocks     map[string][]map[string]hcl.Expression
 	File       string
 }
 
@@ -45,10 +46,20 @@ func Parse(dir string) ([]Resource, error) {
 				attrs[name] = attr.Expr
 			}
 
+			blocks := make(map[string][]map[string]hcl.Expression)
+			for _, nestedBlock := range block.Body.Blocks {
+				nestedAttrs := make(map[string]hcl.Expression)
+				for name, attr := range nestedBlock.Body.Attributes {
+					nestedAttrs[name] = attr.Expr
+				}
+				blocks[nestedBlock.Type] = append(blocks[nestedBlock.Type], nestedAttrs)
+			}
+
 			resources = append(resources, Resource{
 				Type:       block.Labels[0],
 				Name:       block.Labels[1],
 				Attributes: attrs,
+				Blocks:     blocks,
 				File:       file,
 			})
 		}

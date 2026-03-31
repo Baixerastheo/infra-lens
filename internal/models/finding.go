@@ -9,9 +9,9 @@ const (
 )
 
 type Finding struct {
-	Severity  Severity
-	Ressource string
-	Message   string
-	Rule      string
-	File      string
+	Severity Severity
+	Resource string
+	Message  string
+	Rule     string
+	File     string
 }

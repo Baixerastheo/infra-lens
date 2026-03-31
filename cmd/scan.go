@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/Baixerastheo/infra-lens/internal/parser"
+	"github.com/Baixerastheo/infra-lens/internal/rules"
 	"github.com/spf13/cobra"
 )
 
@@ -28,9 +29,12 @@ var scanCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		fmt.Printf("Found %d ressources\n", len(resources))
-		for _, r := range resources {
-			fmt.Printf(" → %s.%s (%s)\n", r.Type, r.Name, r.File)
+		engine := rules.NewEngine()
+		findings := engine.Run(resources)
+
+		fmt.Printf("Found %d issue(s)\n\n", len(findings))
+		for _, f := range findings {
+			fmt.Printf("[%s] %s → %s\n", f.Severity, f.Resource, f.Message)
 		}
 	},
 }
